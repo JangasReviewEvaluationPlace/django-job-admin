@@ -36,6 +36,7 @@ class JobAdmin(admin.ModelAdmin):
 class JobExecutionLogAdmin(admin.ModelAdmin):
     list_display = ("title", "timestamp", )
     search_fields = ("title", )
+    readonly_fields = ("title", "description", "timestamp", )
 
     def has_add_permission(self, request, obj=None):
         return False
