@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "django-job-trigger"
+version = "0.1.0"
+description = "It's a simple application for triggering jobs in the ETL tool"
+authors = ["JangasCodingplace <janisgoesser92@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+Django = "^3.2.4"
+psycopg2-binary = "^2.9.1"
+confluent-kafka = "^1.7.0"
+python-dotenv = "^0.18.0"
+avro = "^1.10.2"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.9.2"
+pytest = "^6.2.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
