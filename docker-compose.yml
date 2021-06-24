@@ -1,0 +1,66 @@
+version: "3"
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: django_job_application_zookeeper
+    ports:
+    - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka-broker:
+    image: wurstmeister/kafka:2.13-2.7.0
+    container_name: django_job_application_kafka_broker
+    ports:
+    - 9092:9092
+    depends_on:
+    - zookeeper
+    environment:
+      KAFKA_CREATE_TOPICS: >-
+        job:1:1
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka-broker:9093,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  postgres-job-database:
+    image: postgres:alpine
+    container_name: django_job_application_postgres_job_database
+    ports:
+    - 54321:5432
+    env_file: ./app/.env
+    volumes:
+      - postgres-job-database-data:/var/lib/postgresql/data/
+
+  django-job-app:
+    build: .
+    container_name: django_job_application_django_job_app
+    ports:
+      - 8000:8000
+    env_file: ./app/.env
+    environment: 
+      WAIT_HOSTS: postgres-job-database:5432
+      WAIT_HOSTS_TIMEOUT: 100
+      WAIT_SLEEP_INTERVAL: 5
+      WAIT_HOST_CONNECT_TIMEOUT: 5
+    depends_on:
+      - postgres-job-database
+    command:
+      - sh
+      - -c
+      - |
+        ./../wait
+        poetry run python manage.py migrate
+        poetry run python manage.py initialsuperuser
+        poetry run python manage.py runserver 0.0.0.0:8000
+    volumes:
+    - ./app/:/app/
+
+volumes:
+  postgres-job-database-data:
