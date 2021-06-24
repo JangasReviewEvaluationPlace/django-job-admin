@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+import logging
+
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+logger = logging.getLogger()
+logger.setLevel(logging.getLevelName(LOG_LEVEL))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +37,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
 # Application definition
 
 INSTALLED_APPS = [
+    'utils',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
