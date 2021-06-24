@@ -37,6 +37,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split()
 # Application definition
 
 INSTALLED_APPS = [
+    'job.apps.JobConfig',
     'utils',
     'django.contrib.admin',
     'django.contrib.auth',
