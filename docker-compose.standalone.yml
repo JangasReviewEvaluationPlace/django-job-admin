@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  postgres-job-database:
+    image: postgres:alpine
+    container_name: django_job_application_postgres_job_database
+    ports:
+    - 54321:5432
+    env_file: ./app/.env.docker
+    volumes:
+      - postgres-job-database-data:/var/lib/postgresql/data/
+
+  django-job-app:
+    build: .
+    container_name: django_job_application_django_job_app
+    ports:
+      - 8000:8000
+    env_file: ./app/.env.docker
+    environment: 
+      WAIT_HOSTS: postgres-job-database:5432
+      WAIT_HOSTS_TIMEOUT: 100
+      WAIT_SLEEP_INTERVAL: 5
+      WAIT_HOST_CONNECT_TIMEOUT: 5
+    depends_on:
+      - postgres-job-database
+    command:
+      - sh
+      - -c
+      - |
+        ./../wait
+        poetry run python manage.py migrate
+        poetry run python manage.py initialsuperuser
+        poetry run python manage.py runserver 0.0.0.0:8000
+    volumes:
+    - ./app/:/app/
+
+volumes:
+  postgres-job-database-data:
