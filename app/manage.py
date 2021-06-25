@@ -4,7 +4,6 @@ import os
 import sys
 import threading
 import logging
-from time import sleep
 from dotenv import load_dotenv
 from worker import Worker
 
