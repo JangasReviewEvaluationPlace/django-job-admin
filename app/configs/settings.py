@@ -12,11 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
-import logging
 
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-logger = logging.getLogger()
-logger.setLevel(logging.getLevelName(LOG_LEVEL))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,5 +129,7 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 KAFKA = {
+    "enabled": os.getenv("KAFKA_ENABLED", "false").lower() == "true",
     "bootstrap_servers": os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092").split(),
+    "job_topic_name": os.getenv("KAFKA_JOB_TOPIC_NAME", "job")
 }

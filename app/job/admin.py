@@ -28,7 +28,7 @@ class JobAdmin(admin.ModelAdmin):
                     "is_one_time_job", )
     list_filter = ("job_type", "is_active", "is_one_time_job", )
     search_fields = ("title", )
-    readonly_fields = ("timestamp", "last_execution", )
+    readonly_fields = ("timestamp", "last_execution", "next_execution", )
     inlines = (LogInline, )
 
 

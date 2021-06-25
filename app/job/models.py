@@ -1,5 +1,7 @@
 import uuid
+from datetime import timedelta
 from django.db import models
+from django.utils.timezone import now
 
 
 class JobType(models.Model):
@@ -18,8 +20,6 @@ class Job(models.Model):
         blank=True,
         unique=True,
         help_text=(
-            "The Title does not have any effect for the job execution. "
-            "It's just an identifier for finding specific jobs.\n"
             "If it's blank it will get an auto created string."
         )
     )
@@ -53,6 +53,11 @@ class Job(models.Model):
     last_execution = models.DateTimeField(
         auto_now=True
     )
+    next_execution = models.DateTimeField(
+        editable=False,
+        null=True,
+        blank=True
+    )
     timestamp = models.DateTimeField(
         auto_now_add=True
     )
@@ -65,7 +70,11 @@ class Job(models.Model):
 
     def save(self, *args, **kwargs):
         self.set_title()
+        self.set_next_execution()
         super().save(*args, **kwargs)
+
+    def set_next_execution(self):
+        self.next_execution = now() + timedelta(minutes=self.frequency)
 
     def set_title(self):
         if self.title:
