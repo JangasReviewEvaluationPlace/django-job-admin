@@ -26,6 +26,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -34,7 +35,7 @@ services:
     container_name: django_job_application_postgres_job_database
     ports:
     - 54321:5432
-    env_file: ./app/.env
+    env_file: ./app/.env.docker
     volumes:
       - postgres-job-database-data:/var/lib/postgresql/data/
 
@@ -43,7 +44,7 @@ services:
     container_name: django_job_application_django_job_app
     ports:
       - 8000:8000
-    env_file: ./app/.env
+    env_file: ./app/.env.docker
     environment: 
       WAIT_HOSTS: postgres-job-database:5432
       WAIT_HOSTS_TIMEOUT: 100
@@ -51,6 +52,7 @@ services:
       WAIT_HOST_CONNECT_TIMEOUT: 5
     depends_on:
       - postgres-job-database
+      - kafka-broker
     command:
       - sh
       - -c

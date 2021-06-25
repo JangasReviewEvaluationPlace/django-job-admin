@@ -17,7 +17,7 @@ class Worker:
         while not self.stop:
             logging.info("Execute Worker")
             call(["python", f"{self.path}manage.py", "job_trigger"])
-            sleep(int(os.getenv("WORKER_EXECUTION_INTERVALL_IN_SECONDS", 15)))
+            sleep(int(os.getenv("WORKER_EXECUTION_INTERVAL_IN_SECONDS", 15)))
 
     def stop_worker(self):
         self.stop = True

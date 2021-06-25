@@ -78,7 +78,7 @@ class Job(models.Model):
 
     def set_title(self):
         if self.title:
-            pass
+            return
         title = uuid.uuid4().hex[:6]
         while Job.objects.filter(title=title).exists():
             title = uuid.uuid4().hex[:6]
