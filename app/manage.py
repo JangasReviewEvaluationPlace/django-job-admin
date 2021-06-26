@@ -2,10 +2,8 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-import threading
 import logging
 from dotenv import load_dotenv
-from worker import Worker
 
 load_dotenv()
 
@@ -30,14 +28,4 @@ def main():
 
 
 if __name__ == '__main__':
-    if os.getenv("WORKER_ENABLED", "True").lower() == "true":
-        if os.path.isfile("worker.tmp"):
-            os.remove("worker.tmp")
-        else:
-            worker = Worker()
-            thread = threading.Thread(daemon=True, target=worker.run)
-            thread.setName("Python Worker")
-            thread.start()
-            with open("worker.tmp", "w") as f:
-                f.write("Worker is running")
     main()
