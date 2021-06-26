@@ -28,11 +28,22 @@ services:
       - -c
       - |
         ./../wait
+        poetry run python manage.py collectstatic --no-input --clear
         poetry run python manage.py migrate
         poetry run python manage.py initialsuperuser
-        poetry run python manage.py runserver 0.0.0.0:8000
+        poetry run gunicorn configs.wsgi:application --bind 0.0.0.0:8000
     volumes:
-    - ./app/:/app/
+      - ./app/:/app/
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./app/static:/app/static
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - django-job-app
 
 volumes:
   postgres-job-database-data:
