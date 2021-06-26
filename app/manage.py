@@ -26,7 +26,11 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
 
-    if sys.argv[1] == "runserver" and os.getenv("WORKER_ENABLED", "True").lower() == "true":
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == '__main__':
+    if os.getenv("WORKER_ENABLED", "True").lower() == "true":
         if os.path.isfile("worker.tmp"):
             os.remove("worker.tmp")
         else:
@@ -36,9 +40,4 @@ def main():
             thread.start()
             with open("worker.tmp", "w") as f:
                 f.write("Worker is running")
-
-    execute_from_command_line(sys.argv)
-
-
-if __name__ == '__main__':
     main()
